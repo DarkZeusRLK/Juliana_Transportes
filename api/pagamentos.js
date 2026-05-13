@@ -1,83 +1,84 @@
 // api/pagamentos.js
-// Log e gestao de pagamentos
+// Log e gestao de pagamentos em Postgres/Neon
 
 const express = require('express');
 const router = express.Router();
 const { autenticar } = require('../middleware/auth');
-const { getDb } = require('../database/db');
+const db = require('../database/db');
 
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 router.use(autenticar);
 
-// GET /api/pagamentos - listar todos
 router.get('/', asyncHandler(async (req, res) => {
-  const db = getDb();
   const { status, cliente_id } = req.query;
 
   let sql = 'SELECT * FROM pagamentos WHERE 1=1';
   const params = [];
 
   if (status) {
-    sql += ' AND status = ?';
     params.push(status);
+    sql += ` AND status = $${params.length}`;
   }
 
   if (cliente_id) {
-    sql += ' AND cliente_id = ?';
     params.push(cliente_id);
+    sql += ` AND cliente_id = $${params.length}`;
   }
 
   sql += ' ORDER BY data_criacao DESC';
 
-  const pagamentos = await db.prepare(sql).all(...params);
-  res.json({ sucesso: true, pagamentos });
+  const result = await db.query(sql, params);
+  res.json({ sucesso: true, pagamentos: result.rows });
 }));
 
-// GET /api/pagamentos/resumo
 router.get('/resumo', asyncHandler(async (req, res) => {
-  const db = getDb();
-  const total_pago = (await db.prepare("SELECT SUM(valor) as s FROM pagamentos WHERE status='pago'").get()).s || 0;
-  const total_pendente = (await db.prepare("SELECT SUM(valor) as s FROM pagamentos WHERE status='pendente'").get()).s || 0;
-  const qtd_pago = (await db.prepare("SELECT COUNT(*) as c FROM pagamentos WHERE status='pago'").get()).c;
-  const qtd_pendente = (await db.prepare("SELECT COUNT(*) as c FROM pagamentos WHERE status='pendente'").get()).c;
-  const qtd_falha = (await db.prepare("SELECT COUNT(*) as c FROM pagamentos WHERE status='falha'").get()).c;
+  const totalPago = await db.query("SELECT SUM(valor) as s FROM pagamentos WHERE status='pago'");
+  const totalPendente = await db.query("SELECT SUM(valor) as s FROM pagamentos WHERE status='pendente'");
+  const qtdPago = await db.query("SELECT COUNT(*) as c FROM pagamentos WHERE status='pago'");
+  const qtdPendente = await db.query("SELECT COUNT(*) as c FROM pagamentos WHERE status='pendente'");
+  const qtdFalha = await db.query("SELECT COUNT(*) as c FROM pagamentos WHERE status='falha'");
 
-  res.json({ sucesso: true, resumo: { total_pago, total_pendente, qtd_pago, qtd_pendente, qtd_falha } });
+  res.json({
+    sucesso: true,
+    resumo: {
+      total_pago: parseFloat(totalPago.rows[0].s || 0),
+      total_pendente: parseFloat(totalPendente.rows[0].s || 0),
+      qtd_pago: parseInt(qtdPago.rows[0].c, 10),
+      qtd_pendente: parseInt(qtdPendente.rows[0].c, 10),
+      qtd_falha: parseInt(qtdFalha.rows[0].c, 10)
+    }
+  });
 }));
 
-// GET /api/pagamentos/:id
 router.get('/:id', asyncHandler(async (req, res) => {
-  const db = getDb();
-  const pag = await db.prepare('SELECT * FROM pagamentos WHERE id = ?').get(req.params.id);
+  const result = await db.query('SELECT * FROM pagamentos WHERE id = $1 LIMIT 1', [req.params.id]);
+  const pagamento = result.rows[0];
 
-  if (!pag) return res.status(404).json({ erro: 'Pagamento nao encontrado' });
-  res.json({ sucesso: true, pagamento: pag });
+  if (!pagamento) return res.status(404).json({ erro: 'Pagamento nao encontrado' });
+  res.json({ sucesso: true, pagamento });
 }));
 
-// POST /api/pagamentos - criar pagamento manual
 router.post('/', asyncHandler(async (req, res) => {
   const { cliente_id, valor, forma_pagamento } = req.body;
+
   if (!valor) return res.status(400).json({ erro: 'Valor obrigatorio' });
 
-  const db = getDb();
-  let nome_cliente = 'Avulso';
-
+  let nomeCliente = 'Avulso';
   if (cliente_id) {
-    const cliente = await db.prepare('SELECT nome_responsavel FROM clientes WHERE id = ?').get(cliente_id);
-    if (cliente) nome_cliente = cliente.nome_responsavel;
+    const cliente = await db.query('SELECT nome_responsavel FROM clientes WHERE id = $1 LIMIT 1', [cliente_id]);
+    if (cliente.rows[0]) nomeCliente = cliente.rows[0].nome_responsavel;
   }
 
-  const result = await db.prepare(`
+  const result = await db.query(`
     INSERT INTO pagamentos (cliente_id, nome_cliente, valor, forma_pagamento, status)
-    VALUES (?, ?, ?, ?, 'pendente')
-  `).run(cliente_id || null, nome_cliente, Number(valor), forma_pagamento || 'pix');
+    VALUES ($1, $2, $3, $4, 'pendente')
+    RETURNING *
+  `, [cliente_id || null, nomeCliente, Number(valor), forma_pagamento || 'pix']);
 
-  const pagamento = await db.prepare('SELECT * FROM pagamentos WHERE id = ?').get(result.lastInsertRowid);
-  res.status(201).json({ sucesso: true, pagamento });
+  res.status(201).json({ sucesso: true, pagamento: result.rows[0] });
 }));
 
-// PATCH /api/pagamentos/:id/status
 router.patch('/:id/status', asyncHandler(async (req, res) => {
   const { status } = req.body;
 
@@ -85,11 +86,18 @@ router.patch('/:id/status', asyncHandler(async (req, res) => {
     return res.status(400).json({ erro: 'Status invalido' });
   }
 
-  const db = getDb();
-  const data_pagamento = status === 'pago' ? new Date().toISOString() : null;
+  const dataPagamento = status === 'pago' ? new Date().toISOString() : null;
 
-  await db.prepare('UPDATE pagamentos SET status = ?, data_pagamento = ? WHERE id = ?')
-    .run(status, data_pagamento, req.params.id);
+  const result = await db.query(`
+    UPDATE pagamentos
+    SET status = $1, data_pagamento = $2
+    WHERE id = $3
+    RETURNING id
+  `, [status, dataPagamento, req.params.id]);
+
+  if (result.rowCount === 0) {
+    return res.status(404).json({ erro: 'Pagamento nao encontrado' });
+  }
 
   res.json({ sucesso: true, mensagem: 'Status atualizado' });
 }));
