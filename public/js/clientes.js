@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.disabled = true; btn.textContent = 'Salvando...';
 
     if (!/^\+55 \(\d{2}\) \d{5}-\d{4}$/.test(telefone)) {
-      toast('Preencha o telefone no formato +55 (DD) xxxx-xxxx', 'erro');
+      toast('Preencha o telefone no formato +55 (DD) xxxxx-xxxx', 'erro');
       btn.disabled = false;
       btn.textContent = id ? 'Salvar' : 'Cadastrar';
       return;
