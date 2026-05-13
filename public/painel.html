@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clientes - Juliana Transportes</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/vars.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/painel.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+  <aside class="sidebar" role="navigation" aria-label="Menu principal">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-box">
+        <div class="sidebar-logo-mark">
+          <div class="sidebar-logo-icon">🚌</div>
+        </div>
+        <div class="sidebar-logo-text">
+          <h1>Juliana<br>Transportes</h1>
+          <span>Painel Administrativo</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="sidebar-section-label">Menu</span>
+      <a class="nav-item ativo" href="painel.html" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 10.5 12 3l9 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 9.5V21h12V9.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span> Inicio
+      </a>
+      <a class="nav-item" href="painel.html" id="btnSidebarCadastrar">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </span> Cadastrar Cliente
+      </a>
+      <a class="nav-item" href="pagamentos.html">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M3 10h18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span> Pagamentos
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item" id="sidebarLogout" aria-label="Sair do sistema">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M10 6V4.5A1.5 1.5 0 0 1 11.5 3H18a1.5 1.5 0 0 1 1.5 1.5v15A1.5 1.5 0 0 1 18 21h-6.5A1.5 1.5 0 0 1 10 19.5V18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M14 12H4m0 0 3.5-3.5M4 12l3.5 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span> Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="topbar-title">Clientes - Juliana Transportes</div>
+          <div class="topbar-sub">Painel responsivo com foco no mobile e leitura objetiva.</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema"></button>
+        <button class="btn btn-primary btn-sm" id="btnAbrirCadastro">+ Cadastrar Cliente</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="dashboard-grid" id="dashboardGrid">
+        <div class="dash-card azul">
+          <div class="label">Total</div>
+          <div class="valor" id="dashTotal">-</div>
+          <div class="sub">clientes</div>
+        </div>
+        <div class="dash-card verde">
+          <div class="label">Pagos</div>
+          <div class="valor" id="dashPagos">-</div>
+          <div class="sub">este mes</div>
+        </div>
+        <div class="dash-card vermelho">
+          <div class="label">Atrasados</div>
+          <div class="valor" id="dashAtrasados">-</div>
+          <div class="sub">inadimplentes</div>
+        </div>
+        <div class="dash-card">
+          <div class="label">Mensalidades</div>
+          <div class="valor" id="dashMensal">-</div>
+          <div class="sub">total mensal</div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <div class="search-wrapper">
+          <span class="search-icon">⌕</span>
+          <input
+            type="search"
+            id="campoBusca"
+            placeholder="Buscar por nome, aluno ou telefone..."
+            aria-label="Buscar clientes"
+          >
+        </div>
+        <select class="filter-select" id="filtroStatus" aria-label="Filtrar por status">
+          <option value="">Todos os status</option>
+          <option value="ativa">Mensalidade Ativa</option>
+          <option value="paga">Pago</option>
+          <option value="atrasada">Inadimplente</option>
+        </select>
+      </div>
+
+      <div class="clientes-lista" id="clientesLista" role="list">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="bottom-nav" aria-label="Navegacao mobile">
+  <div class="bottom-nav-items">
+    <a class="bottom-nav-item ativo" href="painel.html" aria-current="page">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 10.5 12 3l9 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 9.5V21h12V9.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>Inicio</span>
+    </a>
+    <button class="bottom-nav-item" id="btnBottomCadastrar">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Cadastrar</span>
+    </button>
+    <a class="bottom-nav-item" href="pagamentos.html">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" stroke-width="2.2"/>
+          <path d="M3 10h18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>Pagamentos</span>
+    </a>
+    <button class="bottom-nav-item" id="mobileLogout">
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M10 6V4.5A1.5 1.5 0 0 1 11.5 3H18a1.5 1.5 0 0 1 1.5 1.5v15A1.5 1.5 0 0 1 18 21h-6.5A1.5 1.5 0 0 1 10 19.5V18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M14 12H4m0 0 3.5-3.5M4 12l3.5 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span>Sair</span>
+    </button>
+  </div>
+</nav>
+
+<div id="toast-container" aria-live="polite"></div>
+
+<div class="modal-overlay" id="modalCliente" role="dialog" aria-modal="true" aria-labelledby="modalClienteTitulo">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalClienteTitulo">Cadastrar Cliente</h2>
+      <button class="modal-close" id="fecharModalCliente" aria-label="Fechar">x</button>
+    </div>
+    <form id="formCliente" novalidate>
+      <input type="hidden" id="clienteId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nomeResponsavel">Nome do Responsavel *</label>
+          <input type="text" id="nomeResponsavel" placeholder="Nome completo" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="telefone">Telefone *</label>
+          <input type="tel" id="telefone" placeholder="+55 (DD) xxxx-xxxx" value="+55 " maxlength="18" required autocomplete="tel-national" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label for="cpf">CPF *</label>
+          <input type="text" id="cpf" placeholder="000.000.000-00" required maxlength="14" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label for="nomeAluno">Nome do Aluno/Filho *</label>
+          <input type="text" id="nomeAluno" placeholder="Nome do aluno" required>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label for="endereco">Endereco</label>
+          <input type="text" id="endereco" placeholder="Rua, numero - Bairro" autocomplete="street-address">
+        </div>
+        <div class="form-group">
+          <label for="escola">Escola</label>
+          <input type="text" id="escola" placeholder="Nome da escola">
+        </div>
+        <div class="form-group">
+          <label for="rota">Rota</label>
+          <input type="text" id="rota" placeholder="Ex: Rota Centro">
+        </div>
+        <div class="form-group">
+          <label for="valorMensalidade">Valor da Mensalidade (R$) *</label>
+          <input type="number" id="valorMensalidade" placeholder="0,00" min="0" step="0.01" required inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label for="vencimento">Vencimento (dia do mes)</label>
+          <input type="number" id="vencimento" placeholder="Ex: 10" min="1" max="28" value="10" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label for="status">Status da Mensalidade</label>
+          <select id="status">
+            <option value="ativa">Mensalidade Ativa</option>
+            <option value="paga">Pago</option>
+            <option value="atrasada">Inadimplente</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label for="observacoes">Observacoes</label>
+          <textarea id="observacoes" rows="3" placeholder="Alguma observacao sobre o cliente..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button type="button" class="btn btn-ghost btn-full" id="cancelarCliente">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-full" id="salvarCliente">Cadastrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPix" role="dialog" aria-modal="true" aria-labelledby="modalPixTitulo">
+  <div class="modal" style="text-align:center;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalPixTitulo">Gerar PIX</h2>
+      <button class="modal-close" id="fecharModalPix" aria-label="Fechar">x</button>
+    </div>
+    <div id="pixConteudo">
+      <div class="loader"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalConfirmar" role="dialog" aria-modal="true" aria-labelledby="modalConfirmarTitulo">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalConfirmarTitulo">Confirmar exclusao</h2>
+      <button class="modal-close" id="fecharModalConfirmar" aria-label="Fechar">x</button>
+    </div>
+    <p style="color:var(--text-secondary);margin-bottom:24px;line-height:1.6;font-size:0.9rem;">
+      Tem certeza que deseja excluir este cliente?<br>
+      <strong style="color:var(--text-primary);">Esta acao nao pode ser desfeita.</strong>
+    </p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost btn-full" id="cancelarExcluir">Cancelar</button>
+      <button class="btn btn-danger btn-full" id="confirmarExcluir">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/clientes.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnSidebar = document.getElementById('btnSidebarCadastrar');
+    const btnBottom = document.getElementById('btnBottomCadastrar');
+
+    function abrirCadastroNovo(e) {
+      e.preventDefault();
+      document.getElementById('formCliente').reset();
+      document.getElementById('clienteId').value = '';
+      document.getElementById('modalClienteTitulo').textContent = 'Cadastrar Cliente';
+      document.getElementById('salvarCliente').textContent = 'Cadastrar';
+      abrirModal('modalCliente');
+    }
+
+    if (btnSidebar) btnSidebar.addEventListener('click', abrirCadastroNovo);
+    if (btnBottom) btnBottom.addEventListener('click', abrirCadastroNovo);
+  });
+</script>
+</body>
+</html>

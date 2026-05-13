@@ -1,0 +1,126 @@
+.resumo-financeiro {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.filtros-pag {
+  display: flex;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.filtro-btn {
+  flex-shrink: 0;
+  min-height: 2.8rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.filtro-btn.ativo {
+  color: var(--text-contrast);
+  background: linear-gradient(135deg, var(--sky-500), var(--navy-700));
+  border-color: transparent;
+}
+
+.pagamentos-lista {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.pagamento-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-fast), box-shadow var(--transition);
+}
+
+.pagamento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.pagamento-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  background: color-mix(in srgb, var(--navy-900) 10%, var(--bg-subtle));
+}
+
+.pagamento-info {
+  min-width: 0;
+}
+
+.pagamento-nome {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.pagamento-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.pagamento-valor {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.webhook-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 1.6rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--pix-100);
+  color: #0e5b26;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+[data-theme="dark"] .webhook-badge {
+  color: #a6f4a1;
+}
+
+@media (min-width: 40rem) {
+  .resumo-financeiro {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pagamento-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .pagamento-valor {
+    margin-top: 0;
+    text-align: right;
+  }
+}

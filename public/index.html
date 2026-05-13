@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Juliana Transportes - Sistema Administrativo">
+  <title>Juliana Transportes - Login</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/vars.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-shell">
+    <div class="login-toolbar">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema"></button>
+    </div>
+
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-icon">🚌</div>
+        <h1>Juliana Transportes</h1>
+        <p>Painel Administrativo</p>
+      </div>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div id="loginError" class="login-error" role="alert"></div>
+
+        <div class="form-group">
+          <label for="usuario">Usuario</label>
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            placeholder="Digite seu usuario"
+            autocomplete="username"
+            required
+            aria-required="true"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+            aria-required="true"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-login" id="btnLogin">Entrar</button>
+      </form>
+
+      <p class="login-footer">© 2024 Juliana Transportes</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" aria-live="polite"></div>
+
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>
