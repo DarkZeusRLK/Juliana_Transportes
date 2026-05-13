@@ -14,7 +14,7 @@ const pool = new Pool({
 
 async function createAdmin() {
   try {
-    const senha = 'julianacarla1';
+    const senha = 'julianacarla123';
 
     const hash = bcrypt.hashSync(senha, 10);
 
