@@ -61,12 +61,6 @@ router.get('/:id', asyncHandler(async (req, res) => {
 
 router.post('/', asyncHandler(async (req, res) => {
 
-    console.log('BODY RECEBIDO:', req.body);
-
-  const { cliente_id, valor, forma_pagamento } = req.body;
-
-  console.log('VALOR:', valor);
-  console.log('TIPO:', typeof valor);
   
   const { cliente_id, valor, forma_pagamento } = req.body;
 
