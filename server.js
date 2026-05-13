@@ -13,12 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Inicializa banco na primeira requisição
-const { getDb } = require('./database/db');
-app.use((req, res, next) => {
-  try { getDb(); } catch (e) { console.error('DB Error:', e); }
-  next();
-});
 
 // Rotas da API
 app.use('/api/auth',       require('./api/auth'));
