@@ -84,31 +84,42 @@ function mascararCPF(input) {
 
 function formatarTelefoneBrasil(valor) {
   const valorNormalizado = String(valor || '');
-  let digits = valor.replace(/\D/g, '');
 
-  if (valorNormalizado.trim().startsWith('+55') && digits.startsWith('55')) {
+  // Remove tudo que não for número
+  let digits = valorNormalizado.replace(/\D/g, '');
+
+  // Remove o 55 caso já exista
+  if (
+    valorNormalizado.trim().startsWith('+55') &&
+    digits.startsWith('55')
+  ) {
     digits = digits.slice(2);
   }
 
-  digits = digits.slice(0, 10);
+  // Limita para DDD + celular (11 dígitos)
+  digits = digits.slice(0, 11);
 
   const ddd = digits.slice(0, 2);
-  const prefixo = digits.slice(2, 6);
-  const sufixo = digits.slice(6, 10);
+  const numero = digits.slice(2);
 
   let formatado = '+55 ';
 
+  // DDD
   if (ddd) {
     formatado += `(${ddd}`;
-    if (ddd.length === 2) formatado += ')';
+
+    if (ddd.length === 2) {
+      formatado += ') ';
+    }
   }
 
-  if (prefixo) {
-    formatado += `${ddd.length ? ' ' : ''}${prefixo}`;
-  }
-
-  if (sufixo) {
-    formatado += `-${sufixo}`;
+  // Número
+  if (numero.length > 0) {
+    if (numero.length <= 5) {
+      formatado += numero;
+    } else {
+      formatado += `${numero.slice(0, 5)}-${numero.slice(5, 9)}`;
+    }
   }
 
   return formatado;
